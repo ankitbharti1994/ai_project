@@ -1,15 +1,51 @@
+from this import d
 from turtle import mode
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
 from urllib3.util import response
+from langchain.agents import create_agent
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage
+from tavily import TavilyClient
+from langchain_tavily import TavilySearch
 
 load_dotenv()
 
-def main():
-    print("Hello from ai-project!")
 
+def main():
+    """Entry point: prints a greeting and runs model testing."""
+    print("Hello from ai-project!")
+    # model_testing()
+    agentTesting()
+    
+def agentTesting():
+    llm = ChatOpenAI(model="gpt-5")
+    # tools = [search]
+    tools = [TavilySearch()]
+    agent = create_agent(model=llm, tools=tools)
+    result = agent.invoke({"messages": HumanMessage("search for 3 job postings for a Senior iOS engineer in top 5 product based companies in Hyderabad, India on linkedIn or their career page.")})
+    print(result)
+
+@tool
+def search(query: str):
+    """
+    Tool that search over internet
+
+    Args:
+        query: The user's search query string.
+
+    Returns:
+        return the search response based on user query.
+    """
+    print(f'human query is: {query}')
+    tavily = TavilyClient()
+    return tavily.search(query=query)
+
+    
+def model_testing():
+    """Runs a sample LLM chain: summarizes given text via a prompt template and Ollama."""
     information = """
     Mahendra Singh Dhoni ⓘ; born 7 July 1981) is an Indian professional cricketer who plays as a right-handed batter and a wicket-keeper. Widely regarded as one of the most prolific wicket-keeper batsmen and captains, he represented the Indian cricket team and was the captain of the team in limited overs formats from 2007 to 2017 and in Test cricket from 2008 to 2014. Dhoni has captained the most international matches and is the most successful Indian captain. He has led India to victory in the 2007 ICC World Twenty20, the 2011 Cricket World Cup, and the 2013 ICC Champions Trophy, being the only captain to win three different limited overs ICC tournaments. He also led the teams that won the Asia Cup in 2010 and 2016, and he was a member of the title winning squad in 2018.
 
@@ -31,12 +67,11 @@ def main():
         template=summary_template
         )
 
-    llm = ChatOpenAI(temperature=0, model="gpt-5")
-    # llm = ChatOllama(temperature=0, model="gemma3:270m")
+    # llm = ChatOpenAI(temperature=0, model="gpt-5")
+    llm = ChatOllama(temperature=0, model="gemma3:270m")
     chain = summary_prompt_template | llm
     response = chain.invoke(input={'information': information})
     print(response.content)
-
 
 if __name__ == "__main__":
     main()
