@@ -7,6 +7,7 @@ A Python project demonstrating **LangChain** agents with web search (Tavily), st
 - **LangChain agent** – Uses OpenAI (GPT) with Tavily search to answer questions and return structured responses with an answer and source URLs.
 - **Structured output** – Pydantic models (`AgentResponse`, `Source`) for typed answers and citations.
 - **Model testing** – Optional chain using Ollama (e.g. `gemma3:270m`) with a prompt template for summarization.
+- **LangSmith** (optional) – Trace and debug runs in [LangSmith](https://smith.langchain.com).
 
 ## Prerequisites
 
@@ -37,6 +38,17 @@ Create a `.env` file in the project root (do not commit it):
 OPENAI_API_KEY=your_openai_api_key
 TAVILY_API_KEY=your_tavily_api_key
 ```
+
+### LangSmith (optional)
+
+To trace agent and chain runs in [LangSmith](https://smith.langchain.com) for debugging and monitoring, add:
+
+```env
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langsmith_api_key
+```
+
+Get an API key at [smith.langchain.com](https://smith.langchain.com). With these set, runs from `main.py` will appear in your LangSmith project.
 
 ## Usage
 
